@@ -30,12 +30,12 @@ public class UdevDevice {
     return (hastag == 1)
   }
 
-  func property(key: String) -> Optional<String> {
+  func property(key: String) -> String? {
     let maybeValue = udev_device_get_property_value(self.device, key)
     return String.fromCString(maybeValue)
   }
 
-  func sysattr(sysattr: String) -> Optional<String> {
+  func sysattr(sysattr: String) -> String? {
     let maybeValue = udev_device_get_sysattr_value(self.device, sysattr)
     return String.fromCString(maybeValue)
   }
@@ -49,47 +49,47 @@ public class UdevDevice {
     return (initialized == 1)
   }
 
-  var action: Optional<String> {
+  var action: String? {
     return udevDeviceMethodToString(udev_device_get_action)
   }
 
-  var driver: Optional<String> {
+  var driver: String? {
     return udevDeviceMethodToString(udev_device_get_driver)
   }
 
-  var deviceLinks: Optional<Array<UdevDevice>> {
+  var deviceLinks: Array<UdevDevice>? {
     // TODO: struct udev_list_entry *udev_device_get_devlinks_list_entry(struct udev_device *udev_device);
     return Optional.None
   }
-  var devnode: Optional<String> {
+  var devnode: String? {
     return udevDeviceMethodToString(udev_device_get_devnode)
   }
 
-  var devpath: Optional<String> {
+  var devpath: String? {
     return udevDeviceMethodToString(udev_device_get_devpath)
   }
 
-  var devtype: Optional<String> {
+  var devtype: String? {
     return udevDeviceMethodToString(udev_device_get_devtype)
   }
 
-  var sysnum: Optional<String> {
+  var sysnum: String? {
     return udevDeviceMethodToString(udev_device_get_sysnum)
   }
 
-  var sysname: Optional<String> {
+  var sysname: String? {
     return udevDeviceMethodToString(udev_device_get_sysname)
   }
 
-  var subsystem: Optional<String> {
+  var subsystem: String? {
     return udevDeviceMethodToString(udev_device_get_subsystem)
   }
 
-  var syspath: Optional<String> {
+  var syspath: String? {
     return udevDeviceMethodToString(udev_device_get_syspath)
   }
 
-  private func udevDeviceMethodToString(f: (RawUdevDeviceHandle) -> UnsafePointer<Int8>) -> Optional<String> {
+  private func udevDeviceMethodToString(f: (RawUdevDeviceHandle) -> UnsafePointer<Int8>) -> String? {
     let val = f(self.device)
     return String.fromCString(val)
   }
