@@ -12,27 +12,33 @@ public class UdevEnumerator : SequenceType {
   }
 
   public func generate() -> AnyGenerator<UdevDevice> {
-    var currentDevice: COpaquePointer = nil
+    var currentDevice: Optional<COpaquePointer> = wrapCFunc(udev_enumerate_get_list_entry)(self.handle)
 
     return AnyGenerator {
-      if currentDevice == nil {
-        currentDevice = udev_enumerate_get_list_entry(self.handle)
-      } else {
-        currentDevice = udev_list_entry_get_next(currentDevice)
-      }
+      let newDev = currentDevice
+                      .flatMap(self.listEntryGetName)
+                      .map(self.udev.deviceFrom)
 
-      if currentDevice == nil {
-        return nil
-      } else {
-        let rawDevName = udev_list_entry_get_name(currentDevice)
-        let devPath = String.fromCString(rawDevName)
+      currentDevice = currentDevice.flatMap(self.wrapCFunc(udev_list_entry_get_next))
 
-        if devPath != nil {
-          return self.udev.deviceFrom(devPath!)
-        } else {
-          return nil
-        }
+      return newDev
+    }
+  }
+
+  private func listEntryGetName(ptr: COpaquePointer) -> Optional<String> {
+    let str = udev_list_entry_get_name(ptr)
+    return String.fromCString(str)
+  }
+
+  private func wrapCFunc(f: (COpaquePointer) -> COpaquePointer) -> ((COpaquePointer) -> Optional<COpaquePointer>) {
+    func inner(p: COpaquePointer) -> Optional<COpaquePointer> {
+      let val = f(p)
+      if val != nil {
+        return Optional.Some(val)
+      } else {
+        return Optional.None
       }
     }
+    return inner
   }
 }
