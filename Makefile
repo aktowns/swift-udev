@@ -3,16 +3,22 @@ udev_build=$(shell pwd)/.build/debug
 linkerflags=-Xlinker $(shell pwd)/.build/debug/Udev.a -ludev
 includes=-I $(shell pwd)/.build/debug/ -I $(shell pwd)/Packages/swift-udev-binding-1.0.1
 
-all: UdevExample UdevSanityTest lspci
+all: bin/UdevExample bin/UdevSanityTest bin/lspci bin/lsusb
 
-UdevExample: .build/debug/Udev.a Examples/UdevExample/main.swift
-	swiftc $(linkerflags) $(includes) Examples/UdevExample/main.swift -o UdevExample
+bin:
+	mkdir -p ./bin
 
-UdevSanityTest: .build/debug/Udev.a Examples/UdevSanityTest/main.swift
-	swiftc $(linkerflags) $(includes) Examples/UdevSanityTest/main.swift -o UdevSanityTest
+bin/UdevExample: bin .build/debug/Udev.a Examples/UdevExample/main.swift
+	swiftc $(linkerflags) $(includes) Examples/UdevExample/main.swift -o ./bin/UdevExample
 
-lspci: .build/debug/Udev.a Examples/lspci/main.swift
-	swiftc $(linkerflags) $(includes) -g Examples/lspci/main.swift -o lspci
+bin/UdevSanityTest: bin .build/debug/Udev.a Examples/UdevSanityTest/main.swift
+	swiftc $(linkerflags) $(includes) Examples/UdevSanityTest/main.swift -o ./bin/UdevSanityTest
+
+bin/lspci: bin .build/debug/Udev.a Examples/lspci/main.swift
+	swiftc $(linkerflags) $(includes) -g Examples/lspci/main.swift -o ./bin/lspci
+
+bin/lsusb: bin .build/debug/Udev.a Examples/lsusb/main.swift
+	swiftc $(linkerflags) $(includes) -g Examples/lsusb/main.swift -o ./bin/lsusb
 
 .build/debug/Udev.a: Sources/*.swift
 	swift build

@@ -22,8 +22,9 @@ public enum Subsystem: String {
 }
 
 public enum DeviceType: String {
-  case USBDevice  = "usb_device"
-  case SCSIDevice = "scsi_device"
+  case USBDevice    = "usb_device"
+  case USBInterface = "usb_interface"
+  case SCSIDevice   = "scsi_device"
 }
 
 public enum Netlink: String {

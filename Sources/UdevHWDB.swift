@@ -7,6 +7,8 @@ public class UdevHWDB {
     case PCIClass     = "ID_PCI_CLASS_FROM_DATABASE"
     case PCISubclass  = "ID_PCI_SUBCLASS_FROM_DATABASE"
     case PCIInterface = "ID_PCI_INTERFACE_FROM_DATABASE"
+    case USBClass     = "ID_USB_CLASS_FROM_DATABASE"
+    case USBProtocol  = "ID_USB_PROTOCOL_FROM_DATABASE"
   }
 
   let handle: COpaquePointer
