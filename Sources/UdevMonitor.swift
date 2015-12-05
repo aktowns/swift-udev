@@ -30,13 +30,15 @@ public class UdevMonitor {
     return UdevDevice(handle: dev)
   }
 
-  public func receiveDevices(f: (UdevDevice) -> Void) -> Void {
+  public func receiveDevices(f: (UdevDevice) -> Bool) -> Void {
     while true {
       if let dev = receiveDevice() {
-        f(dev)
+        if f(dev) == false {
+          break
+        }
       }
 
-      sleep(5)
+      sleep(1)
     }
   }
 }

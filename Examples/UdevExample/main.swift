@@ -93,4 +93,6 @@ mon.receiveDevices() { device in
   print("   Subsystem: \(device.subsystem)")
   print("   Devtype: \(device.devtype)")
   print("   Action: \(device.action)")
+
+  return true // keep looping
 }
