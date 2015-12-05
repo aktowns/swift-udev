@@ -1,4 +1,5 @@
 import Glibc
+import Udev
 
 let udev = Udev()
 let device = udev.device(fromSyspath: "/sys/devices/pci0000:00/0000:00:01.0")!
@@ -36,10 +37,18 @@ print("sysattr(subsystem_device)=", terminator:"")
 print(device.sysattr("subsystem_device"))
 print("sysattr(subsystem_vendor)=", terminator:"")
 print(device.sysattr("subsystem_vendor"))
+print("sysattr(modalias)=", terminator:"")
+let modalias = device.sysattr("modalias")
+print(modalias)
 
-let enumerate = udev.enumerate(fromSubsystem: "hidraw")!
+guard let enumerate = udev.enumerate() else {
+  print("Failed to create initializer")
+  exit(-1)
+}
 
 for device in enumerate {
   print("syspath=", terminator: "")
   print(device.syspath)
 }
+
+print(udev.hwdb(forModAlias: modalias!))

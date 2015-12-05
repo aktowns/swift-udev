@@ -26,13 +26,13 @@ public class UdevDevice {
     return UdevDevice(handle: handle)
   }
 
-  public static func from(udev: Udev, type: DeviceType, devnum: DeviceNumber) -> UdevDevice? {
+  public static func from(udev: Udev, type: DeviceNodeType, devnum: DeviceNumber) -> UdevDevice? {
     let handle = udev_device_new_from_devnum(udev.handle, type.rawValue, devnum)
     return UdevDevice(handle: handle)
   }
 
-  public static func from(udev: Udev, subsystem: String, sysname: String) -> UdevDevice? {
-    let handle = udev_device_new_from_subsystem_sysname(udev.handle, subsystem, sysname)
+  public static func from(udev: Udev, subsystem: Subsystem, sysname: String) -> UdevDevice? {
+    let handle = udev_device_new_from_subsystem_sysname(udev.handle, subsystem.rawValue, sysname)
     return UdevDevice(handle: handle)
   }
 
@@ -41,73 +41,73 @@ public class UdevDevice {
     return UdevDevice(handle: handle)
   }
 
-  func hasTag(tag: String) -> Bool {
+  public func hasTag(tag: String) -> Bool {
     let hastag = udev_device_has_tag(self.device, tag)
     return (hastag == 1)
   }
 
-  func property(key: String) -> String? {
+  public func property(key: String) -> String? {
     let maybeValue = udev_device_get_property_value(self.device, key)
     return String.fromCString(maybeValue)
   }
 
-  func sysattr(sysattr: String) -> String? {
+  public func sysattr(sysattr: String) -> String? {
     let maybeValue = udev_device_get_sysattr_value(self.device, sysattr)
     return String.fromCString(maybeValue)
   }
 
-  func parent(withSubsystem subsystem: String, andDevtype devtype: String) -> UdevDevice? {
-    let devHandle = udev_device_get_parent_with_subsystem_devtype(self.device, subsystem, devtype)
+  public func parent(withSubsystem subsystem: Subsystem, andDevtype devtype: DeviceType) -> UdevDevice? {
+    let devHandle = udev_device_get_parent_with_subsystem_devtype(self.device, subsystem.rawValue, devtype.rawValue)
     return UdevDevice(handle: devHandle)
   }
 
-  var devnum: DeviceNumber {
+  public var devnum: DeviceNumber {
     return udev_device_get_devnum(self.device)
   }
 
-  var initialized: Bool {
+  public var initialized: Bool {
     let initialized = udev_device_get_is_initialized(self.device)
     return (initialized == 1)
   }
 
-  var action: String? {
+  public var action: String? {
     return udevDeviceMethodToString(udev_device_get_action)
   }
 
-  var driver: String? {
+  public var driver: String? {
     return udevDeviceMethodToString(udev_device_get_driver)
   }
 
-  var deviceLinks: Array<UdevDevice>? {
+  public var deviceLinks: Array<UdevDevice>? {
     // TODO: struct udev_list_entry *udev_device_get_devlinks_list_entry(struct udev_device *udev_device);
     return Optional.None
   }
 
-  var devnode: String? {
+  public var devnode: String? {
     return udevDeviceMethodToString(udev_device_get_devnode)
   }
 
-  var devpath: String? {
+  public var devpath: String? {
     return udevDeviceMethodToString(udev_device_get_devpath)
   }
 
-  var devtype: String? {
+  public var devtype: String? {
     return udevDeviceMethodToString(udev_device_get_devtype)
   }
 
-  var sysnum: String? {
+  public var sysnum: String? {
     return udevDeviceMethodToString(udev_device_get_sysnum)
   }
 
-  var sysname: String? {
+  public var sysname: String? {
     return udevDeviceMethodToString(udev_device_get_sysname)
   }
 
-  var subsystem: String? {
+  public var subsystem: String? {
     return udevDeviceMethodToString(udev_device_get_subsystem)
   }
 
-  var syspath: String? {
+  public var syspath: String? {
     return udevDeviceMethodToString(udev_device_get_syspath)
   }
 

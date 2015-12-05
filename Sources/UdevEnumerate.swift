@@ -13,17 +13,21 @@ public class UdevEnumerate : SequenceType {
     self.handle = handle
   }
 
+  init?(udev: Udev) {
+    self.udev = udev
+    self.handle = udev_enumerate_new(udev.handle)
+
+    if self.handle == nil {
+      return nil
+    }
+  }
+
   deinit {
     udev_enumerate_unref(self.handle)
   }
 
-  public static func from(udev: Udev, subsystem: String) -> UdevEnumerate? {
-    let handle = udev_enumerate_new(udev.handle)
-    return UdevEnumerate(udev: udev, handle: handle)
-  }
-
-  public func addMatch(subsystem: String) -> Void {
-    udev_enumerate_add_match_subsystem(self.handle, subsystem)
+  public func addMatch(withSubsystem subsystem: Subsystem) -> Void {
+    udev_enumerate_add_match_subsystem(self.handle, subsystem.rawValue)
   }
 
   public func scan() -> Void {

@@ -1,8 +1,21 @@
 import CUdev
 
-public enum DeviceType: Int8 {
+public enum DeviceNodeType: Int8 {
   case Char = 0
   case Block = 1
+}
+
+public enum Subsystem: String {
+  case HIDRaw = "hidraw"
+  case USB = "usb"
+}
+
+public enum DeviceType: String {
+  case USBDevice = "usb_device"
+}
+
+public enum Netlink: String {
+  case Udev = "udev"
 }
 
 public typealias DeviceNumber = CUnsignedLong
@@ -15,7 +28,7 @@ public class Udev {
     return self.udev
   }
 
-  init() {
+  public init() {
     self.udev = udev_new()
   }
 
@@ -27,11 +40,11 @@ public class Udev {
     return UdevDevice.from(self, syspath: path)
   }
 
-  public func device(fromType type: DeviceType, andDevnum devnum: DeviceNumber) -> UdevDevice? {
+  public func device(fromType type: DeviceNodeType, andDevnum devnum: DeviceNumber) -> UdevDevice? {
     return UdevDevice.from(self, type: type, devnum: devnum)
   }
 
-  public func device(fromSubsystem subsystem: String, andSysname sysname: String) -> UdevDevice? {
+  public func device(fromSubsystem subsystem: Subsystem, andSysname sysname: String) -> UdevDevice? {
     return UdevDevice.from(self, subsystem: subsystem, sysname: sysname)
   }
 
@@ -39,11 +52,19 @@ public class Udev {
     return UdevDevice.from(self, deviceId: deviceId)
   }
 
-  public func enumerate(fromSubsystem subsystem: String) -> UdevEnumerate? {
-    return UdevEnumerate.from(self, subsystem: subsystem)
+  public func enumerate() -> UdevEnumerate? {
+    return UdevEnumerate(udev: self)
   }
 
-  public func monitor(fromNetlink netlink: String) -> UdevMonitor? {
+  public func monitor(fromNetlink netlink: Netlink) -> UdevMonitor? {
     return UdevMonitor.from(self, netlink: netlink)
+  }
+
+  public func hwdb(forModAlias modalias: String) -> [String: String] {
+    guard let hwdb = UdevHWDB(udev: self) else {
+      return [String: String]()
+    }
+
+    return hwdb.properties(forModAlias: modalias)
   }
 }
