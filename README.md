@@ -63,3 +63,26 @@ produces lspci like output
 
 ### UdevExample
 sets up and monitors hidraw devices, ported from the C code at [http://www.signal11.us/oss/udev/udev_example.c](http://www.signal11.us/oss/udev/udev_example.c)
+
+
+    λ Udev git master* → bin/UdevExample
+    Device Node Path: Optional("/dev/hidraw0")
+      VID/PID: Optional("05ac") Optional("0262")
+      Optional("Apple Inc.")
+      Optional("Apple Internal Keyboard / Trackpad")
+      serial: nil
+    Device Node Path: Optional("/dev/hidraw1")
+      VID/PID: Optional("05ac") Optional("0262")
+      Optional("Apple Inc.")
+      Optional("Apple Internal Keyboard / Trackpad")
+      serial: nil
+    Got Device
+       Node: Optional("/dev/hidraw2")
+       Subsystem: Optional("hidraw")
+       Devtype: nil
+       Action: Optional("add")
+    Got Device
+       Node: Optional("/dev/hidraw2")
+       Subsystem: Optional("hidraw")
+       Devtype: nil
+       Action: Optional("remove")
