@@ -19,6 +19,10 @@ public class Udev {
     self.udev = udev_new()
   }
 
+  deinit {
+    udev_unref(self.udev)
+  }
+
   public func deviceFrom(syspath: String) -> UdevDevice {
     return UdevDevice(udev: self, syspath: syspath)
   }

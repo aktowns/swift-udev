@@ -11,6 +11,10 @@ public class UdevEnumerator : SequenceType {
     udev_enumerate_scan_devices(self.handle)
   }
 
+  deinit {
+    udev_enumerate_unref(self.handle)
+  }
+
   public func generate() -> AnyGenerator<UdevDevice> {
     var currentDevice: COpaquePointer? = udev_enumerate_get_list_entry(self.handle)
 

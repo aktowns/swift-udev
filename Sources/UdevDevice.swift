@@ -13,6 +13,10 @@ public class UdevDevice {
     self.device = udev_device_new_from_syspath(udev.handle, syspath)
   }
 
+  deinit {
+    udev_device_unref(self.device)
+  }
+
   init(udev: Udev, type: DeviceType, devnum: DeviceNumber) {
     self.device = udev_device_new_from_devnum(udev.handle, type.rawValue, devnum)
   }
