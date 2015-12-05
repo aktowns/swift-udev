@@ -1,8 +1,8 @@
 import Glibc
 
 let udev = Udev()
-let device = udev.deviceFrom("/sys/devices/pci0000:00/0000:00:01.0")
-// let device = udev.deviceFromId("0x8c31")
+let device = udev.device(fromSyspath: "/sys/devices/pci0000:00/0000:00:01.0")!
+// let device = udev.device(fromId: "0x8c31")
 
 print("devnum=", terminator:"")
 print(device.devnum)
@@ -37,9 +37,9 @@ print(device.sysattr("subsystem_device"))
 print("sysattr(subsystem_vendor)=", terminator:"")
 print(device.sysattr("subsystem_vendor"))
 
-let enumerator = UdevEnumerator(udev: udev, subsystem: "hidraw")
+let enumerate = udev.enumerate(fromSubsystem: "hidraw")!
 
-for device in enumerator {
+for device in enumerate {
   print("syspath=", terminator: "")
   print(device.syspath)
 }

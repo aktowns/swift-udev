@@ -5,12 +5,12 @@ learning as i go, give me a yell if things are terribly wrong!
 
 ```swift
 let udev = Udev()
-let device = udev.deviceFrom("/sys/devices/pci0000:00/0000:00:01.0")
-print(device.subsystem) // => Optional("pci")
-print(device.driver)    // => Optional("pcieport")
+let device = udev.device(fromSyspath: "/sys/devices/pci0000:00/0000:00:01.0")
+print(device!.subsystem) // => Optional("pci")
+print(device!.driver)    // => Optional("pcieport")
 // ..
 
-let enumerator = UdevEnumerator(udev: udev, subsystem: "hidraw")
+let enumerator = udev.enumerate(fromSubsystem: "hidraw")
 for device in enumerator {
   print("syspath=", terminator: "")
   print(device.syspath)

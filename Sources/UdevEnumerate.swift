@@ -1,18 +1,33 @@
 import CUdev
 
-public class UdevEnumerator : SequenceType {
+public class UdevEnumerate : SequenceType {
   private let handle: COpaquePointer
   private let udev: Udev
 
-  init(udev: Udev, subsystem: String) {
+  init?(udev: Udev, handle: COpaquePointer) {
+    if handle == nil {
+      return nil
+    }
+
     self.udev = udev
-    self.handle = udev_enumerate_new(udev.handle)
-    udev_enumerate_add_match_subsystem(self.handle, subsystem)
-    udev_enumerate_scan_devices(self.handle)
+    self.handle = handle
   }
 
   deinit {
     udev_enumerate_unref(self.handle)
+  }
+
+  public static func from(udev: Udev, subsystem: String) -> UdevEnumerate? {
+    let handle = udev_enumerate_new(udev.handle)
+    return UdevEnumerate(udev: udev, handle: handle)
+  }
+
+  public func addMatch(subsystem: String) -> Void {
+    udev_enumerate_add_match_subsystem(self.handle, subsystem)
+  }
+
+  public func scan() -> Void {
+    udev_enumerate_scan_devices(self.handle)
   }
 
   public func generate() -> AnyGenerator<UdevDevice> {
@@ -21,7 +36,7 @@ public class UdevEnumerator : SequenceType {
     return AnyGenerator {
       let newDev = currentDevice
                       .flatMap(self.listEntryGetName)
-                      .map(self.udev.deviceFrom)
+                      .flatMap{self.udev.device(fromSyspath: $0)}
 
       currentDevice = currentDevice.flatMap(udev_list_entry_get_next)
 

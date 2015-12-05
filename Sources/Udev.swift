@@ -23,19 +23,27 @@ public class Udev {
     udev_unref(self.udev)
   }
 
-  public func deviceFrom(syspath: String) -> UdevDevice {
-    return UdevDevice(udev: self, syspath: syspath)
+  public func device(fromSyspath path: String) -> UdevDevice? {
+    return UdevDevice.from(self, syspath: path)
   }
 
-  public func deviceFrom(type: DeviceType, devnum: DeviceNumber) -> UdevDevice {
-    return UdevDevice(udev: self, type: type, devnum: devnum)
+  public func device(fromType type: DeviceType, andDevnum devnum: DeviceNumber) -> UdevDevice? {
+    return UdevDevice.from(self, type: type, devnum: devnum)
   }
 
-  public func deviceFrom(subsystem: String, sysname: String) -> UdevDevice {
-    return UdevDevice(udev: self, subsystem: subsystem, sysname: sysname)
+  public func device(fromSubsystem subsystem: String, andSysname sysname: String) -> UdevDevice? {
+    return UdevDevice.from(self, subsystem: subsystem, sysname: sysname)
   }
 
-  public func deviceFromId(deviceId: String) -> UdevDevice {
-    return UdevDevice(udev: self, deviceId: deviceId)
+  public func device(fromId deviceId: String) -> UdevDevice? {
+    return UdevDevice.from(self, deviceId: deviceId)
+  }
+
+  public func enumerate(fromSubsystem subsystem: String) -> UdevEnumerate? {
+    return UdevEnumerate.from(self, subsystem: subsystem)
+  }
+
+  public func monitor(fromNetlink netlink: String) -> UdevMonitor? {
+    return UdevMonitor.from(self, netlink: netlink)
   }
 }

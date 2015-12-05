@@ -9,24 +9,36 @@ public class UdevDevice {
     return self.device
   }
 
-  init(udev: Udev, syspath: String) {
-    self.device = udev_device_new_from_syspath(udev.handle, syspath)
+  init?(handle: RawUdevDeviceHandle) {
+    if handle == nil {
+      return nil
+    }
+
+    self.device = handle
   }
 
   deinit {
     udev_device_unref(self.device)
   }
 
-  init(udev: Udev, type: DeviceType, devnum: DeviceNumber) {
-    self.device = udev_device_new_from_devnum(udev.handle, type.rawValue, devnum)
+  public static func from(udev: Udev, syspath path: String) -> UdevDevice? {
+    let handle = udev_device_new_from_syspath(udev.handle, path)
+    return UdevDevice(handle: handle)
   }
 
-  init(udev: Udev, subsystem: String, sysname: String) {
-    self.device = udev_device_new_from_subsystem_sysname(udev.handle, subsystem, sysname)
+  public static func from(udev: Udev, type: DeviceType, devnum: DeviceNumber) -> UdevDevice? {
+    let handle = udev_device_new_from_devnum(udev.handle, type.rawValue, devnum)
+    return UdevDevice(handle: handle)
   }
 
-  init(udev: Udev, deviceId: String) {
-    self.device = udev_device_new_from_device_id(udev.handle, deviceId)
+  public static func from(udev: Udev, subsystem: String, sysname: String) -> UdevDevice? {
+    let handle = udev_device_new_from_subsystem_sysname(udev.handle, subsystem, sysname)
+    return UdevDevice(handle: handle)
+  }
+
+  public static func from(udev: Udev, deviceId: String) -> UdevDevice? {
+    let handle = udev_device_new_from_device_id(udev.handle, deviceId)
+    return UdevDevice(handle: handle)
   }
 
   func hasTag(tag: String) -> Bool {
@@ -42,6 +54,11 @@ public class UdevDevice {
   func sysattr(sysattr: String) -> String? {
     let maybeValue = udev_device_get_sysattr_value(self.device, sysattr)
     return String.fromCString(maybeValue)
+  }
+
+  func parent(withSubsystem subsystem: String, andDevtype devtype: String) -> UdevDevice? {
+    let devHandle = udev_device_get_parent_with_subsystem_devtype(self.device, subsystem, devtype)
+    return UdevDevice(handle: devHandle)
   }
 
   var devnum: DeviceNumber {
@@ -65,6 +82,7 @@ public class UdevDevice {
     // TODO: struct udev_list_entry *udev_device_get_devlinks_list_entry(struct udev_device *udev_device);
     return Optional.None
   }
+
   var devnode: String? {
     return udevDeviceMethodToString(udev_device_get_devnode)
   }
