@@ -87,17 +87,10 @@ for device in enumerate {
 
   The monitor was set up earler in this file, and monitoring is already underway.
 */
-while true {
-  if (mon.hasDevice) {
-    if let device = mon.receiveDevice() {
-      print("Got Device");
-      print("   Node: \(device.devnode)")
-      print("   Subsystem: \(device.subsystem)")
-      print("   Devtype: \(device.devtype)")
-      print("   Action: \(device.action)")
-    } else {
-      print("No Device from receive_device(). An error occured.")
-    }
-    sleep(5)
-  }
+mon.receiveDevices() { device in
+  print("Got Device");
+  print("   Node: \(device.devnode)")
+  print("   Subsystem: \(device.subsystem)")
+  print("   Devtype: \(device.devtype)")
+  print("   Action: \(device.action)")
 }

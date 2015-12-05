@@ -1,3 +1,4 @@
+import Glibc
 import CUdev
 
 public class UdevMonitor {
@@ -10,10 +11,6 @@ public class UdevMonitor {
   public static func from(udev: Udev, netlink: Netlink) -> UdevMonitor? {
     let handle = udev_monitor_new_from_netlink(udev.handle, netlink.rawValue)
     return UdevMonitor(withUdev: udev, andHandle: handle)
-  }
-
-  public var hasDevice: Bool {
-    return false
   }
 
   public func addFilter(bySubsystem subsystem: Subsystem, devtype: DeviceType? = nil) -> Void {
@@ -31,5 +28,15 @@ public class UdevMonitor {
   public func receiveDevice() -> UdevDevice? {
     let dev = udev_monitor_receive_device(self.handle)
     return UdevDevice(handle: dev)
+  }
+
+  public func receiveDevices(f: (UdevDevice) -> Void) -> Void {
+    while true {
+      if let dev = receiveDevice() {
+        f(dev)
+      }
+
+      sleep(5)
+    }
   }
 }
