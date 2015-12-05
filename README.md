@@ -10,7 +10,7 @@ print(device!.subsystem) // => Optional("pci")
 print(device!.driver)    // => Optional("pcieport")
 // ..
 
-let enumerator = udev.enumerate(fromSubsystem: "hidraw")
+let enumerator = udev.enumerate(fromSubsystem: .HIDRaw)
 for device in enumerator {
   print("syspath=", terminator: "")
   print(device.syspath)

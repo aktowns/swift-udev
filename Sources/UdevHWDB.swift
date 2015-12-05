@@ -1,7 +1,7 @@
 import CUdev
 
 public class UdevHWDB {
-  public enum HWDBKey: String {
+  public enum Key: String {
     case Model        = "ID_MODEL_FROM_DATABASE"
     case Vendor       = "ID_VENDOR_FROM_DATABASE"
     case PCIClass     = "ID_PCI_CLASS_FROM_DATABASE"
@@ -23,8 +23,8 @@ public class UdevHWDB {
     udev_hwdb_unref(self.handle)
   }
 
-  public func properties(forModAlias modalias: String, andFlags flags: UInt32 = 0) -> [String: String] {
-    var kvpairs = [String: String]()
+  public func properties(forModAlias modalias: String, andFlags flags: UInt32 = 0) -> [Key: String] {
+    var kvpairs = [Key: String]()
 
     var currentEntry: COpaquePointer = udev_hwdb_get_properties_list_entry(self.handle, modalias, flags)
 
@@ -33,7 +33,12 @@ public class UdevHWDB {
       let value = String.fromCString(udev_list_entry_get_value(currentEntry))
 
       if name != nil && value != nil {
-        kvpairs[name!] = value!
+        guard let key = Key(rawValue: name!) else {
+          print("Unknown key type \(name!)")
+          return kvpairs
+        }
+
+        kvpairs[key] = value!
       }
 
       currentEntry = udev_list_entry_get_next(currentEntry)
